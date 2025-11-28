@@ -1,22 +1,23 @@
 {
-    "name": "predict",
-    "version": "1.0.0",
-    "description": "",
-    "main": "server.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "repository": {
-        "type": "git"
-    },
-    "author": "Iren Lorenzo Fonseca",
-    "license": "ISC",
-    "bugs": {},
-    "dependencies": {
-        "@tensorflow/tfjs": "^4.22.0",
-        "@tensorflow/tfjs-backend-wasm": "^4.22.0",
-        "express": "^5.1.0",
-        "mongodb": "^7.0.0",
-        "mongoose": "^9.0.0"
-    }
+  "name": "apirest-producto",
+  "version": "1.0.0",
+  "description": "para api de clases de SOD",
+  "keywords": [
+    "crud",
+    "rest",
+    "node",
+    "express",
+    "mongo"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "github.com/jorgeizquierdo-git/predict"
+  },
+  "license": "ISC",
+  "author": "Jorge Izquierdo",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
 }
