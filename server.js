@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3002;
 const app = express();
 
 app.use(express.json());
-mongoose.connect('mongodb://localhost_27017/prediccion')
+mongoose.connect('mongodb://localhost:27017/prediccion')
 .then(()=>{
   console.log('Conexión a la base de datos establecida');
 }).catch(err=>{
