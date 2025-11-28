@@ -1,23 +1,15 @@
 {
-  "name": "apirest-producto",
+  "name": "predict",
   "version": "1.0.0",
-  "description": "para api de clases de SOD",
-  "keywords": [
-    "crud",
-    "rest",
-    "node",
-    "express",
-    "mongo"
-  ],
+  "description": "",
   "repository": {
-    "type": "git",
-    "url": "github.com/jorgeizquierdo-git/predict"
+    "type": "git"
   },
   "license": "ISC",
-  "author": "Jorge Izquierdo",
-  "type": "commonjs",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "bugs":{},
+  "dependencies":{
+    "@tensorflow/tfjs": "^4.22.0",
+        "@tensorflow/tfjs-backend-wasm": "^4.22.0",
+        "express": "^5.1.0"
   }
 }
