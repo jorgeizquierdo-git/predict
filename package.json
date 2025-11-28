@@ -6,10 +6,12 @@
     "type": "git"
   },
   "license": "ISC",
-  "bugs":{},
-  "dependencies":{
+  "bugs": {},
+  "dependencies": {
     "@tensorflow/tfjs": "^4.22.0",
-        "@tensorflow/tfjs-backend-wasm": "^4.22.0",
-        "express": "^5.1.0"
+    "@tensorflow/tfjs-backend-wasm": "^4.22.0",
+    "express": "^5.1.0",
+    "mongodb": "^7.0.0",
+    "mongoose": "^9.0.0"
   }
 }
