@@ -2,7 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const predictController = require("../controllers/predictController");
-const { predict } = require("../services/tfModelService");ç
+const { predict } = require("../services/tfModelService");
 const Prediccion = require("../model/predictor");
 
 

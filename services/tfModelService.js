@@ -3,8 +3,9 @@ const path = require("path");
 const { pathToFileURL } = require("url");
 const tf = require("@tensorflow/tfjs");
 const wasmBackend = require("@tensorflow/tfjs-backend-wasm");
-
-const MODEL_VERSION = "v1.0";
+const PORT = process.env.PORT || 3002;
+const mongo_uri = process.env.mongo_uri;
+const model_version = process.env.mongo_uri
 
 let model = null;
 let ready = false;

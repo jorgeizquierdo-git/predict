@@ -63,10 +63,15 @@ async function doPredict(req, res) {
     const prediction = await predict(features);
     const latencyMs = Date.now() - start;
     const timestamp = new Date().toISOString();
+    const acac= await crearPrediccion({
+      input,
+      output,
+      createdAt
+    });
 
     // De momento sin MongoDB → predictionId null
     res.status(201).json({
-      predictionId: null,
+      predictionId: acac,id,
       prediction,
       timestamp,
       latencyMs
