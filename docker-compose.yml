@@ -1,0 +1,24 @@
+services:
+  mongo:
+    image: mongo:7.0
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db # persistencia de Mongo
+
+  predict:
+  build: .  # usa tu Dockerfile de este proyecto
+  image: predict:1.0  # nombre de imagen (opcional pero útil)
+  container_name: predict
+  restart: unless-stopped
+  depends_on:
+    - mongo
+  env_file:
+    - .env.docker # variables de entorno para este servicio
+  ports:
+  - "3002:3002" # host:contenedor
+
+volumes:
+mongo-data:
