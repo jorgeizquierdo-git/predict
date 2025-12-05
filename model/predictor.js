@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
-
 const predictionSchema = new mongoose.Schema({
-  input: { type: Number, required: true },
-  output: { type: Object, required: true },
+  features: { type: [Number], required: true },
+  meta: {
+    featureCount: Number,
+    dataId: String,
+    source: String
+  },
   createdAt: { type: Date, default: Date.now }
 });
-
 module.exports = mongoose.model("Prediction", predictionSchema);

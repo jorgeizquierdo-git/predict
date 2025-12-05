@@ -64,8 +64,8 @@ async function doPredict(req, res) {
     const latencyMs = Date.now() - start;
     const timestamp = new Date().toISOString();
     const acac= await crearPrediccion({
-      input,
-      output,
+      features,
+      meta,
       createdAt
     });
 

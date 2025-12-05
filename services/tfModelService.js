@@ -5,7 +5,7 @@ const tf = require("@tensorflow/tfjs");
 const wasmBackend = require("@tensorflow/tfjs-backend-wasm");
 const PORT = process.env.PORT || 3002;
 const mongo_uri = process.env.mongo_uri;
-const model_version = process.env.mongo_uri
+const MODEL_VERSION = process.env.mongo_uri || "v1.0";
 
 let model = null;
 let ready = false;
@@ -88,15 +88,16 @@ async function initModel(serverUrl) {
  * Ejecuta el modelo con un vector de features
  * Devuelve un escalar >= 0
  */
-async function predict(features) {
+async function predict(input) {
   if (!ready || !model) {
     throw new Error("Model not ready");
   }
-  if (!Array.isArray(features) || features.length !== inputDim) {
-    throw new Error(`features must be an array of ${inputDim} numbers`);
+  if (!Array.isArray(input.features) || input.meta.featureCount !== inputDim) {
+    console.log(input)
+    throw new Error(`features must be an array of ${inputDim} numbers and it's ${input.meta.featureCount}`);
   }
 
-  const X = tf.tensor2d([features], [1, inputDim], "float32");
+  const X = tf.tensor2d([input.features], [1, inputDim], "float32");
 
   let out;
   if (typeof model.executeAsync === "function") {
