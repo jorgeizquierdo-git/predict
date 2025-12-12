@@ -4,7 +4,7 @@ services:
     container_name: mongo
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - mongo-data:/data/db
 
@@ -22,3 +22,8 @@ services:
 
 volumes:
   mongo-data:
+
+#########.env.docker############
+##PREDICT_PORT=3002
+##MONGO_URI_PREDICT=mongodb://mongo:27017/preddiccion
+##MODEL_VERSION=v1.0
