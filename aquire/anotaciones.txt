@@ -1,0 +1,93 @@
+Time_end = target date -1
+Time_start =  time_end – 3
+
+No puedo comprobar si mongodb funciona
+no puedo ejecutar docker compose
+no se donde poner el codigo de fetch
+
+tiene que definir el body
+hacer elfetch
+procesar features
+BD.
+response
+
+mierda, mierda, mierda
+
+acquire se comunica ??????
+
+http://localhost:3002/predict
+
+{
+  "features": [1.315,1.81,1.27,8,0,9,30],
+  "meta": {
+    "featureCount": 7,
+    "dataId": "6772c1f3e2a0b12345678901",
+    "source": "orchestrator"
+  }
+}
+
+¿¿¿Fetch???
+
+const KUNNA_URL = "https://openapi.kunna.es/data/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NjM2NDEwNjB9.ixb4O5Jgk-e_oPMSsycpD7A_iGVqIl4Ijl2a_kLrT94";
+
+// alias fijo del contador (ya no usamos uid)
+const ALIAS = "6339651";
+
+/**
+ * Llama a Kunna con un rango [timeStart, timeEnd]
+ * y devuelve el objeto { columns, values }.
+ */
+async function fetchKunna(timeStart, timeEnd) {
+  const url = KUNNA_URL;
+
+  const headers = {
+    "Content-Type": "application/json"
+  };
+
+  const body = {
+    time_start: timeStart.toISOString(),
+    time_end: timeEnd.toISOString(),
+    filters: [
+      { filter: "name", values: ["1d"] },
+      { filter: "alias", values: [ALIAS] }
+    ],
+    limit: 100,
+    count: false,
+    order: "DESC"
+  };
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify(body)
+  });
+
+  if (!response.ok) {
+    throw new Error(`KUNNA_BAD_STATUS:${response.status}`);
+  }
+
+  const json = await response.json();
+  const result = json.result;
+
+  if (!result || !Array.isArray(result.columns) || !Array.isArray(result.values)) {
+    throw new Error("KUNNA_INVALID_RESULT");
+  }
+
+  return result; // { columns, values }
+}
+
+????
+
+Accuire
+1-obtengo fechas
+fechap = hoy+1
+fechap = hoy
+time_end = fecha-1
+time_end = fecha
+2-fetch
+3-transformnar a features los datos
+4-Guarda en MongoDB el input a Kunna y el output deseado con la fecha
+5-prueba JSON??
+
+después: Orquestador
+llama al aquire, y el output se lo manda a predict

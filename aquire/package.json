@@ -1,0 +1,24 @@
+{
+  "name": "aquire",
+  "version": "1.0.0",
+  "description": "elpepe",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jorgeizquierdo-git/aquire.git"
+  },
+  "author": "Jorge Izquierdo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jorgeizquierdo-git/aquire/issues"
+  },
+  "homepage": "https://github.com/jorgeizquierdo-git/aquire#readme",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "mongoose": "^9.0.1"
+  }
+}
