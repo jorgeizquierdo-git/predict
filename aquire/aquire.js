@@ -75,9 +75,9 @@ app.get('/data', async (req, res) => {
         bjsk = new Date(bjsk.getTime() - 86400 * 1000);
       }
       icfn=new Date(bjsk.getTime()- 3 * 86400 * 1000);
-      await among=data(bksk,icfn);
+      among=await data(bksk,icfn);
       if (!among) { 
-          return res.status(404).send({ mensaje: 'Kunna me ha dicho que no' }); 
+          return res.status(404).send({ mensaje: 'Kunna me ha dicho que no hay nada' }); 
       }
       res.status(200).send({ among }); 
   } catch (err) { 
