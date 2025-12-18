@@ -1,27 +1,13 @@
-// services/tfModelService.js
 const path = require("path");
 const { pathToFileURL } = require("url");
 const tf = require("@tensorflow/tfjs");
 const wasmBackend = require("@tensorflow/tfjs-backend-wasm");
-const PORT = process.env.PORT || 3002;
-const mongo_uri = process.env.mongo_uri;
-const MODEL_VERSION = process.env.mongo_uri || "v1.0";
 
 let model = null;
 let ready = false;
 let inputName = null;
 let outputName = null;
 let inputDim = null;
-
-function getModelInfo() {
-  return {
-    ready,
-    modelVersion: MODEL_VERSION,
-    inputName,
-    outputName,
-    inputDim
-  };
-}
 
 function wasmFileDirUrl() {
   const distFsPath = path.join(
@@ -35,10 +21,6 @@ function wasmFileDirUrl() {
   return pathToFileURL(distFsPath + path.sep).href;
 }
 
-/**
- * Inicializa backend WASM y carga el GraphModel
- * serverUrl: ej. http://localhost:3002
- */
 async function initModel(serverUrl) {
   const wasmPath = wasmFileDirUrl();
   wasmBackend.setWasmPaths(wasmPath);
@@ -48,8 +30,6 @@ async function initModel(serverUrl) {
   console.log("[TF] Backend:", tf.getBackend());
 
   const modelDir = path.resolve(__dirname, "..", "model");
-  console.log("[TF] Sirviendo modelo desde:", modelDir);
-
   const modelUrl = `${serverUrl}/model/model.json`;
   console.log("[TF] Cargando modelo:", modelUrl);
 
@@ -59,25 +39,17 @@ async function initModel(serverUrl) {
   inputDim = model.inputs?.[0]?.shape?.[1] ?? null;
   outputName = model.outputs?.[0]?.name || null;
 
-  console.log("[TF] inputName:", inputName);
-  console.log("[TF] outputName:", outputName);
-  console.log("[TF] inputDim:", inputDim);
-
   if (!inputName || !outputName || !inputDim) {
     throw new Error("No se ha podido detectar inputName/outputName/inputDim");
   }
 
   // Warm-up
   const Xwarm = tf.zeros([1, inputDim], "float32");
-  let out;
   if (typeof model.executeAsync === "function") {
-    out = await model.executeAsync({ [inputName]: Xwarm });
+    await model.executeAsync({ [inputName]: Xwarm });
   } else {
-    out = model.execute({ [inputName]: Xwarm });
+    model.execute({ [inputName]: Xwarm });
   }
-
-  if (Array.isArray(out)) out.forEach(t => t?.dispose?.());
-  else out?.dispose?.();
   Xwarm.dispose();
 
   ready = true;
@@ -85,19 +57,17 @@ async function initModel(serverUrl) {
 }
 
 /**
- * Ejecuta el modelo con un vector de features
- * Devuelve un escalar >= 0
+ * Ejecuta el modelo con un array de features
+ * Devuelve un número >= 0
  */
-async function predict(input) {
-  if (!ready || !model) {
-    throw new Error("Model not ready");
-  }
-  if (!Array.isArray(input.features) || input.meta.featureCount !== inputDim) {
-    console.log(input)
-    throw new Error(`features must be an array of ${inputDim} numbers and it's ${input.meta.featureCount}`);
+async function predict(features) {
+  if (!ready || !model) throw new Error("Model not ready");
+
+  if (!Array.isArray(features) || features.length !== inputDim) {
+    throw new Error(`features must be an array of ${inputDim} numbers, got length ${features.length}`);
   }
 
-  const X = tf.tensor2d([input.features], [1, inputDim], "float32");
+  const X = tf.tensor2d([features], [1, inputDim], "float32");
 
   let out;
   if (typeof model.executeAsync === "function") {
@@ -106,12 +76,9 @@ async function predict(input) {
     out = model.execute({ [inputName]: X });
   }
 
-  const preds2d = Array.isArray(out)
-    ? await out[0].array()
-    : await out.array();
-
+  const preds2d = Array.isArray(out) ? await out[0].array() : await out.array();
   const predictionReal = preds2d?.[0]?.[0] ?? 0;
-  const prediction = Math.max(predictionReal, 0); // clamp a 0
+  const prediction = Math.max(predictionReal, 0); // clamp >= 0
 
   if (Array.isArray(out)) out.forEach(t => t?.dispose?.());
   else out?.dispose?.();
@@ -122,6 +89,5 @@ async function predict(input) {
 
 module.exports = {
   initModel,
-  getModelInfo,
   predict
 };

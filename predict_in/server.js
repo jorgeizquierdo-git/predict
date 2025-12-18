@@ -1,63 +1,78 @@
-// server.js
-// Entry point del servicio PREDICT
-require("dotenv").config();
+require("dotenv").config({ path: "../.env.docker" });
 const express = require("express");
 const path = require("path");
 const mongoose = require('mongoose');
 const predictRoutes = require("./routes/predictRoutes");
-const { initModel } = require("./services/tfModelService");
+const { initModel, predict } = require("./services/tfModelService");
 const Predictor = require('./model/predictor');
+
 const PORT = process.env.PORT || 3002;
 const app = express();
-app.use(express.json()); 
+
+app.use(express.json());
+
+// Conexión a MongoDB
 mongoose.connect('mongodb://localhost:27017/prediccion')
-.then(()=>{
-  console.log('Conexión a la base de datos establecida');
-}).catch(err=>{
-  console.error('Error de conexion a la base de datos:',err);
-});
+  .then(() => console.log('Conexión a la base de datos establecida'))
+  .catch(err => console.error('Error de conexión a la base de datos:', err));
+
+// Obtener predicción por ID
 app.get('/prediccion/predictions/:id', async (req, res) => { 
-    let predictionId = req.params.id; 
- 
-    try { 
-        const prediction = await Predictor.findById(predictionId); 
-         
-        if (!prediction) { 
-            return res.status(404).send({ mensaje: 'El elemento no existe' }); 
-        } 
-         
-        res.status(200).send({ prediction }); 
-    } catch (err) { 
-        res.status(500).send({ mensaje: `Error al realizar la petición: ${err}` }); 
-    } 
-});
-app.post('/prediccion/predictions', async (req, res) => { 
-console.log('POST /prediccion/predictions'); 
-console.log(req.body); 
-// Crear un nuevo producto utilizando req.body 
-let prediction = new Predictor(req.body); 
-try { 
-// Guardar el producto en la base de datos 
-const predictionStored = await prediction.save(); 
-res.status(200).send({ prediction: predictionStored }); 
-} catch (err) { 
-res.status(500).send({ mensaje: `Error al salvar en la base de datos: ${err}` }); 
-} 
+  try {
+    const prediction = await Predictor.findById(req.params.id);
+    if (!prediction) return res.status(404).send({ mensaje: 'El elemento no existe' });
+    res.status(200).send({ prediction });
+  } catch (err) {
+    res.status(500).send({ mensaje: `Error al realizar la petición: ${err.message}` });
+  }
 });
 
+// Crear nueva predicción
+app.post('/prediccion/predictions', async (req, res) => {
+  try {
+    console.log('POST body recibido:', JSON.stringify(req.body, null, 2));
 
-// Servir la carpeta del modelo TFJS (model/model.json + pesos)
-const modelDir = path.resolve(__dirname, "model");
-app.use("/model", express.static(modelDir));
+    const features = req.body.features;
+    if (!Array.isArray(features) || features.length === 0) {
+      return res.status(400).send({ mensaje: 'El input debe ser un array de números' });
+    }
 
-// Rutas del servicio PREDICT
+    if (!features.every(f => typeof f === 'number')) {
+      return res.status(400).send({ mensaje: 'Todos los elementos de features deben ser números' });
+    }
+
+    const meta = req.body.meta && typeof req.body.meta === 'object' ? req.body.meta : {};
+
+    const predictionResult = await predict(features);
+
+    const prediction = new Predictor({
+      features,
+      result: predictionResult,
+      meta
+    });
+
+    const predictionStored = await prediction.save();
+
+    console.log('Documento guardado en MongoDB:', predictionStored);
+
+    res.status(200).send({ prediction: predictionStored });
+
+  } catch (err) {
+    console.error('Error POST /prediccion/predictions:', err);
+    res.status(500).send({ mensaje: `Error al predecir y guardar: ${err.message}` });
+  }
+});
+
+// Servir modelo
+app.use("/model", express.static(path.resolve(__dirname, "model")));
+
+// Otras rutas
 app.use("/", predictRoutes);
 
-// Arranque del servidor + carga del modelo
+// Iniciar servidor + carga del modelo
 app.listen(PORT, async () => {
   const serverUrl = `http://localhost:${PORT}`;
   console.log(`[PREDICT] Servicio escuchando en ${serverUrl}`);
-
   try {
     await initModel(serverUrl);
   } catch (err) {
@@ -65,4 +80,3 @@ app.listen(PORT, async () => {
     process.exit(1);
   }
 });
-//

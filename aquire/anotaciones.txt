@@ -43,3 +43,18 @@ time_end = fecha
 
 después: Orquestador
 llama al aquire, y el output se lo manda a predict
+
+env.docker.
+
+KUNNA_URL=https://openapi.kunna.es/data/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NjM2NDEwNjB9.ixb4O5Jgk-e_oPMSsycpD7A_iGVqIl4Ijl2a_kLrT94
+AQUIRE_PORT=3001
+MONGO_URI_AQUIRE=mongodb://mongo:27017/aquire
+ALIAS=6339651
+
+PREDICT_PORT=3002
+MONGO_URI_PREDICT=mongodb://mongo:27017/prediccion
+MODEL_VERSION=v1.0
+
+ORCHESTRATOR_PORT=8080
+URL_ACQUIRE_SERVICE=http://acquire:3001
+URL_PREDICT_SERVICE=http://predict:3002

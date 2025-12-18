@@ -20,10 +20,17 @@ services:
     ports:
       - "3002:3002"
 
+  aquire:
+    build: ./aquire
+    image: aquire:1.0
+    container_name: aquire
+    restart: unless_stopped
+    depends_on:
+      - mongo
+    env_file:
+      - .env.docker
+    ports:
+      - "3001:3001"
+
 volumes:
   mongo-data:
-
-#########.env.docker############
-##PREDICT_PORT=3002
-##MONGO_URI_PREDICT=mongodb://mongo:27017/preddiccion
-##MODEL_VERSION=v1.0

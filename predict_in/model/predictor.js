@@ -1,11 +1,16 @@
-const mongoose = require("mongoose");
-const predictionSchema = new mongoose.Schema({
+const mongoose = require('mongoose');
+
+const metaSchema = new mongoose.Schema({
+  featureCount: { type: Number },
+  dataId: { type: String },
+  source: { type: String }
+}, { _id: false });
+
+const predictorSchema = new mongoose.Schema({
   features: { type: [Number], required: true },
-  meta: {
-    featureCount: Number,
-    dataId: String,
-    source: String
-  },
+  result: { type: Number, required: true },
+  meta: metaSchema,
   createdAt: { type: Date, default: Date.now }
-});
-module.exports = mongoose.model("Prediction", predictionSchema);
+}, { collection: 'predictions' });
+
+module.exports = mongoose.model('Predictor', predictorSchema);
