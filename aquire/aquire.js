@@ -12,7 +12,7 @@ app.use(express.json());
 
 let KunnaModel;
 
-mongoose.connect("mongodb://localhost:27017/aquire")
+mongoose.connect(process.env.MONGO_URI_AQUIRE)
   .then(() => {
     console.log("Conexión a la base de datos establecida");
     conectao = true;
@@ -53,6 +53,7 @@ async function fetchKunna(timeStart, timeEnd) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
   });
+  
 
   if (!response.ok) {
     throw new Error(`KUNNA_BAD_STATUS:${response.status}`);
@@ -71,8 +72,10 @@ async function fetchKunna(timeStart, timeEnd) {
 async function data(hoy, ayer) {
   return await fetchKunna(ayer, hoy);
 }
+app.get("/health", (req, res) => res.json({ status: "ok" }));
+app.get("/ready", (req, res) => res.json({ status: "ready" }));
 
-app.get("/data", async (req, res) => {
+app.post("/data", async (req, res) => {
   try {
     let hoy = new Date();
     if (hoy.getHours() < 23) {

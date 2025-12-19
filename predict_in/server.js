@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 
 // Conexión a MongoDB
-mongoose.connect('mongodb://localhost:27017/prediccion')
+mongoose.connect(process.env.MONGO_URI_PREDICT)
   .then(() => console.log('Conexión a la base de datos establecida'))
   .catch(err => console.error('Error de conexión a la base de datos:', err));
 
@@ -28,7 +28,7 @@ app.get('/prediccion/predictions/:id', async (req, res) => {
 });
 
 // Crear nueva predicción
-app.post('/prediccion/predictions', async (req, res) => {
+app.post('/predict', async (req, res) => {
   try {
     console.log('POST body recibido:', JSON.stringify(req.body, null, 2));
 

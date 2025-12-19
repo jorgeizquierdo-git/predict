@@ -4,33 +4,46 @@ services:
     container_name: mongo
     restart: unless-stopped
     ports:
-      - "27018:27017"
+      - "27018:27017" # opcional, solo si quieres acceder desde el host (Compass,etc.)
     volumes:
-      - mongo-data:/data/db
+      - mongo-data:/data/db # persistencia de Mongo
 
   predict:
-    build: ./predict_in
-    image: predict:1.0
+    build: ./predict # usa tu Dockerfile de este proyecto
+    image: predict:1.0 # nombre de imagen (opcional pero útil)
     container_name: predict
     restart: unless-stopped
     depends_on:
       - mongo
     env_file:
-      - .env.docker
+      - .env.docker # variables de entorno para este servicio
     ports:
-      - "3002:3002"
-
-  aquire:
-    build: ./aquire
-    image: aquire:1.0
-    container_name: aquire
-    restart: unless_stopped
+      - "3002:3002" # host:contenedor
+  
+  acquire:
+    build: ./acquire # usa tu Dockerfile de este proyecto
+    image: acquire:1.0 # nombre de imagen (opcional pero útil)
+    container_name: acquire
+    restart: unless-stopped
     depends_on:
       - mongo
     env_file:
-      - .env.docker
+      - .env.docker # variables de entorno para este servicio
     ports:
-      - "3001:3001"
+      - "3001:3001" # host:contenedor
+  
+  orchestrator:
+    build: ./orchestrator # usa tu Dockerfile de este proyecto
+    image: orchestrator:1.0 # nombre de imagen (opcional pero útil)
+    container_name: orchestrator
+    restart: unless-stopped
+    depends_on:
+      - acquire
+      - predict
+    env_file:
+      - .env.docker # variables de entorno para este servicio
+    ports:
+      - "8080:8080" # host:contenedor
 
 volumes:
   mongo-data:
