@@ -72,7 +72,7 @@ async function fetchKunna(timeStart, timeEnd) {
 async function data(hoy, ayer) {
   return await fetchKunna(ayer, hoy);
 }
-app.get("/health", (req, res) => res.json({ status: "ok" }));
+app.get("/health", (req, res) => res.json({ status: "ok" , service:"aquire"}));
 app.get("/ready", (req, res) => res.json({ status: "ready" }));
 
 app.post("/data", async (req, res) => {

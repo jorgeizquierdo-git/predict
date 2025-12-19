@@ -5,7 +5,10 @@ const { predict } = require("../services/tfModelService");
 const Prediccion = require("../model/predictor"); // Asegúrate que este es tu modelo correcto
 
 // Rutas de salud
-router.get("/health", (req, res) => res.json({ status: "ok" }));
+router.get("/health", (req, res) => res.json({ 
+    status: "ok" ,
+    service:"predict"
+}));
 router.get("/ready", (req, res) => res.json({ status: "ready" }));
 
 // Endpoint para hacer predicciones y guardarlas en MongoDB

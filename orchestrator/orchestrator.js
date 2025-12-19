@@ -7,20 +7,25 @@ const app = express();
 
 app.use(express.json());
 
+app.get("/health", (req, res) => res.json({
+  status: "ok",
+  service: "orchestrator"
+}));
 
 app.post("/run", async (req, res) => {
   try {
 
     const among = await fetchAquireSiViu();
     const predictResult = await fetchPredictSiViu(among);
+    console.log(predictResult)
     const response = {
-      dataId: among.values[0][1],
-      predictionId: predictResult.predictionId,
-      prediction: predictResult.prediction,
-      timestamp: new Date().toISOString()
-    };
+          dataId: among.values[0][1],
+          predictionId: predictResult.prediction._id,
+          prediction: predictResult.prediction.result,
+          timestamp: new Date().toISOString()
+  };
 
-    res.status(200).json(response);
+res.status(200).json(response);
 
   } catch (err) {
     console.error(err);
@@ -135,7 +140,6 @@ if (healthJson.status !== "ok" || statusJson.status !== "ready") {
 
 
   const features = extraureConsumsIDates(among);
-
   const body = {
     features,
     meta: {
