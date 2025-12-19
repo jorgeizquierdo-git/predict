@@ -58,7 +58,7 @@ app.post('/predict', async (req, res) => {
     res.status(200).send({ prediction: predictionStored });
 
   } catch (err) {
-    console.error('Error POST /prediccion/predictions:', err);
+    console.error('Error POST /predict:', err);
     res.status(500).send({ mensaje: `Error al predecir y guardar: ${err.message}` });
   }
 });
